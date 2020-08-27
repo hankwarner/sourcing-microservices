@@ -1,0 +1,11 @@
+project_type: microsvc
+project_name: servicesourcing
+template_version: 1.17
+author: Hank Warner
+email: h.warner@supply.com
+group: netsuite
+dev_urls:
+  - dev-service-servicesourcing.nbsupply.net
+  - dev-service-servicesourcing.supply.com
+  - service-servicesourcing.nbsupply.net
+  - service-servicesourcing.supply.com

@@ -1,0 +1,23 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source: 
+    repository: supplycom/bionic_dotnet
+    username: polo912
+    password: aeshaekaiViecuo7pi1gu2Die
+
+inputs:
+  - name: repo
+
+run:
+  path: sh
+  args:
+    - -exc
+    - |
+      ls -alh
+      uname -a
+      cd repo/ServiceSourcing.Debug
+      dotnet --info
+      dotnet run

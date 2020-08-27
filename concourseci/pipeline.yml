@@ -1,0 +1,64 @@
+---
+resources:
+  - name: repo
+    type: git
+    source:
+      uri: git+ssh://git@bitbucket.org:supplydev/servicesourcing_prototype.git
+      branch: master
+      private_key: |-
+        -----BEGIN RSA PRIVATE KEY-----
+        MIIEogIBAAKCAQEAvMOn6BFCyn35xIL67ySz7MwMC9iqM4RNUHiR5D1UEwSgfRLN
+        qiq0ffBkNC390MDIca/duyfSUkmAvknIEv+otDiJxVE/AxuGa5GqMm1IOwlmg6eF
+        N6rQ8il1t2n0cTflQff88i0D73P7KUwcPaoy62FczGU3YvZb+Nu1AvdBzzE2Ga+x
+        ftt4Y3EttDNu8ASiewA3QAITU9SB2N1PA30eC1nOT3bNMvw36bM+Wwt3/T31a9pc
+        MjQjHbpKjtTcrtH1RdUTV3heOuy01RYih5c5FYV+w2huw4y1LDCot1U0XDgM/67B
+        BWA46mb0BCL+h76EjWGGbNiKHBDnS8OasEx43QIDAQABAoIBAHhX7NZBGunqArDM
+        KJsKNUOEmzF6QphxgrEJDUoL52vwiTj0IfaZH1UjS18Q6z6JicEhNCW7r5USk2e9
+        tjaWk8HCQeNwdtHOXJZ72Zwom+I3jgnlZUMmPewFjq0Oee8siZbTOYpUNKwWr0uW
+        4HJX7fquqfENnpATLHOt7usjI+upBNTlXhZHMMMT80xlnuxcwmNY4UWyK8r2OFfw
+        0GaMKB5YJBJt2s4vdCzguEx/qpPzU7C2eNN5omOKGHutbAYzvKyF7z+lHMZEtNYr
+        Sc1K49XGO49UHrtZgNoEB5lvhTtt2qn9bmZpN10XEEZsOdAz3cxg0a4L0XpEglIo
+        Gs9ab+kCgYEA75NDhrkePLcAqCqz1waA2HBLB1NYFEIBCgWU3BXAC3PXu/kSKyzK
+        ut3QyHnm/uOjRuzULm4GRrtSnHgk58fb+dHdD6eK3a708WgKAT+8yiNBCpb3slsT
+        nHkFs6TFCUnnNgmaDGyLNY5PQ3nVvZwosibcb9vyX/CWJwMhmgdnRLcCgYEAybSe
+        g1jalmaye6h+3+SKpZwbXsSusVwMhv6xLrbP9t66KxMxMelPEU53wck5BDw12FGx
+        /v4polE/DsANMySZsP7gmSce+CNboJtUjUKUaz3WgIQh7fqmiIu6kLPed71QmBMD
+        HlOAN106w8H+Vft+NVBcV80q8ALuSo4AJQ7EowsCgYBCPwxrEoFD9K6f0b8M9GVo
+        dBSrH+a5I086QDTbbsA96nh7J/JYMfiVF4UGCn9PeA7MK+y4MgBWSrIbRjWeSeuP
+        9vITxBZoGlrs7gHmOoOvuXPgw8IWdYzEtcpX1HYPjXn7vUf1q4YK9yD/3Y628Zln
+        Ocu2urEYymQawYjnGKj7nQKBgE2MuQkM53W95E9w197i8n97xnYoLnYYSuS4FY09
+        UjW7Kl6XUWm8Jt8jiR2jbN14/Ma/mizMsVsr24+jPS/1mXWYeOfJR7nldjwInHh3
+        KbMVolvk8Vqa7N5AwqkRzq3AxrTBUoidWAVxPb+33T5XpA2BaQ+E3UZMCiv17o5Q
+        4D9DAoGACorILycMjFPZa7+GEm/G1jtoj1SGnH0fJJIsYqSaihlS2rTQVOVfUjfv
+        bv6DvUATBYmeCUQbY00BSuvv1Usm+z0DKbH0mR0mMYjytyZ7J4g+GwKjdMIYO142
+        Qy1bMGL+5kqiY88aSuXA5IuME5IcnhP+fY8nCEeDtU0QN7cmcQI=
+        -----END RSA PRIVATE KEY-----
+inputs:
+  - name: bitbucket-ssh-privkey
+jobs:
+  - name: unit-test
+    public: true
+    plan:
+      - get: repo
+      - task: dotnet test
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+#            source:
+#              repository: supplycom/bionic_dotnet
+#              username: polo912
+#              password: aeshaekaiViecuo7pi1gu2Die
+            source:
+              repository: mcr.microsoft.com/dotnet/core/sdk
+          inputs:
+            - name: repo
+          run:
+            path: sh
+            args:
+              - -exc
+              - |
+                cd ./repo/csharp/
+                dotnet --info
+                dotnet restore
+                dotnet test

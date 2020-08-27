@@ -1,0 +1,10 @@
+[dev]
+dev-service-servicesourcing.nbsupply.net ansible_user=ansible
+
+[prod]
+35.202.238.149 ansible_user=ansible
+35.224.193.81 ansible_user=ansible
+
+[redirectors]
+redirector-0.nbsupply.net ansible_user=ansible
+redirector-1.nbsupply.net ansible_user=ansible

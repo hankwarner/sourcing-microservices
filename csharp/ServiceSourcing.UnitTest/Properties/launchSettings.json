@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "ServiceSourcing.UnitTest": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}

@@ -1,0 +1,60 @@
+- hosts:
+    - dev
+  remote_user: ansible
+  become: yes
+  become_user: root
+  become_method: sudo
+  tasks:
+    - name: install certbot
+      get_url: url=https://dl.eff.org/certbot-auto dest=/usr/bin/certbot-auto mode='0755'
+    - name: create letsencrypt directory
+      file: name=/var/www/letsencrypt state=directory
+    - name: stop nginx
+      shell: systemctl stop nginx
+      args: creates="/etc/letsencrypt/live/{{ ansible_host }}"
+    - name: create letsencrypt certificate
+      shell: "certbot-auto certonly -n --standalone -m david.gallmeier@supply.com --agree-tos -d {{ ansible_host }}"
+      args: creates="/etc/letsencrypt/live/{{ ansible_host }}"
+    - name: create web app directory
+      file:
+        name: /var/www/servicesourcing
+        state: directory
+        owner: root
+        group: root
+    - name: publish web app
+      synchronize:
+        src:  ../../csharp/ServiceSourcing/bin/Debug/netcoreapp2.2/ubuntu.18.04-x64/publish/
+        dest: /var/www/servicesourcing/
+    - name: update web app file ownership
+      file:
+        path: /var/www/servicesourcing/
+        state: directory
+        recurse: yes
+        owner: www-data
+        group: www-data
+    - name: push systemd config
+      copy:
+        src: systemd.service
+        dest: /etc/systemd/system/servicesourcing.service
+        owner: root
+        group: root
+        mode: 0644
+    - name: re-read systemd configs
+      systemd:
+        daemon_reload: yes
+    - name: start servicesourcing
+      systemd:
+        state: restarted
+        name: servicesourcing
+        enabled: yes
+    - name: push nginx config
+      copy:
+        src: nginx.conf
+        dest: /etc/nginx/conf.d/servicesourcing.conf
+        owner: root
+        group: root
+        mode: 0644
+    - name: restart nginx
+      systemd:
+        state: reloaded
+        name: nginx
